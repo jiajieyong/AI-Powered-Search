@@ -1,0 +1,12 @@
+{
+  "name": "ai-knowledge-base",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter frontend dev\" \"pnpm --filter backend start:dev\"",
+    "install-all": "pnpm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
