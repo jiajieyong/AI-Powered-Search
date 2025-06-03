@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { OpenAiService } from 'src/openAi/openAi.service';
+import { EmbeddingService } from 'src/embedding/embedding.service';
 import { ChromaController } from './chroma.controller';
 import { ChromaService } from './chroma.service';
 
 @Module({
-  providers: [ChromaService, OpenAiService],
+  providers: [ChromaService, EmbeddingService],
   controllers: [ChromaController],
 })
 export class ChromaModule {}

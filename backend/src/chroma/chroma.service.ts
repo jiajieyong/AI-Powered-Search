@@ -1,13 +1,13 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ChromaClient, Collection } from 'chromadb';
-import { OpenAiService } from '../openAi/openAi.service';
+import { EmbeddingService } from '../embedding/embedding.service';
 
 @Injectable()
 export class ChromaService implements OnModuleInit {
   private chromaClient: ChromaClient;
   private collection: Collection;
 
-  constructor(private readonly openAiService: OpenAiService) {}
+  constructor(private readonly embeddingService: EmbeddingService) {}
 
   async onModuleInit() {
     console.log('ChromaService initializing...');
@@ -26,12 +26,12 @@ export class ChromaService implements OnModuleInit {
     return this.collection;
   }
 
-  async addDocument(id: string, text: string, metadata: Record<string, any>) {
-    const embedding = await this.openAiService.getEmbedding(text);
+  async addDocument(id: number, chunk: string, metadata: Record<string, any>) {
+    const embedding = await this.embeddingService.getEmbedding(chunk);
 
     await this.collection.upsert({
-      ids: [id],
-      embeddings: [embedding],
+      ids: [`${this.collection.name}-${id}`],
+      embeddings: embedding,
       metadatas: [metadata],
     });
 

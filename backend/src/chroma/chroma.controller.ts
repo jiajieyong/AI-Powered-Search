@@ -6,7 +6,7 @@ export class ChromaController {
   constructor(private readonly chromaService: ChromaService) {}
 
   @Post('add-document')
-  async addDocument(@Query('id') id: string, @Query('text') text: string) {
+  async addDocument(@Query('id') id: number, @Query('text') text: string) {
     await this.chromaService.addDocument(id, text, { source: 'api' });
   }
 
