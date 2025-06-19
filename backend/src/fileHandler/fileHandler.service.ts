@@ -1,16 +1,40 @@
 import fs from 'fs/promises';
 import path from 'path';
+import pdf from 'pdf-parse';
 import { ChromaService } from 'src/chroma/chroma.service';
 
+type PdfParseResult = {
+  numpages: number;
+  numrender: number;
+  info: any;
+  metadata: any;
+  version: string;
+  text: string;
+};
+
+type PdfParse = (dataBuffer: Buffer) => Promise<PdfParseResult>;
+
+const typedPdf = pdf as PdfParse;
 export class FileHandlerService {
   constructor(private readonly chromaService: ChromaService) {}
 
   //TO-DO: handle other file formats ie. PDF, docx, csv-parser
   async loadFile(filePath: string): Promise<string> {
-    const file = await fs.readFile(path.normalize(filePath), {
-      encoding: 'utf-8',
-    });
-    return file;
+    const extension = path.extname(filePath).toLowerCase();
+
+    switch (extension) {
+      case '.txt':
+        return await fs.readFile(path.normalize(filePath), {
+          encoding: 'utf-8',
+        });
+      case '.pdf': {
+        const buffer = await fs.readFile(path.normalize(filePath));
+        const data = await typedPdf(buffer);
+        return data.text;
+      }
+      default:
+        throw new Error(`Unsupported file format: ${extension}`);
+    }
   }
 
   chunkText(text: string, maxLength = 500): string[] {
